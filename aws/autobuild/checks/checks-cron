@@ -1,0 +1,2 @@
+# Run the check script once after instal
+* * * * * root /autobuild/checks/checks.sh

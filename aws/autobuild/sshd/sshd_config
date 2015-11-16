@@ -1,0 +1,55 @@
+# Gombadi modified file to work with spot instances
+#
+#
+#
+
+#	$OpenBSD: sshd_config,v 1.93 2014/01/10 05:59:19 djm Exp $
+
+Port 17351
+#AddressFamily any
+#ListenAddress 0.0.0.0
+#ListenAddress ::
+
+# HostKeys for protocol version 2
+HostKey /etc/ssh/ssh_host_rsa_key
+HostKey /etc/ssh/ssh_host_ecdsa_key
+HostKey /etc/ssh/ssh_host_ed25519_key
+
+# Logging
+# obsoletes QuietMode and FascistLogging
+#SyslogFacility AUTH
+SyslogFacility AUTHPRIV
+#LogLevel INFO
+
+# Authentication:
+
+#LoginGraceTime 2m
+#PermitRootLogin yes
+# Only allow root to run commands over ssh, no shell
+PermitRootLogin no
+#MaxAuthTries 6
+#MaxSessions 10
+
+# The default is to check both .ssh/authorized_keys and .ssh/authorized_keys2
+# but this is overridden so installations will only check .ssh/authorized_keys
+AuthorizedKeysFile .ssh/authorized_keys
+
+UsePAM yes
+
+X11Forwarding no
+PrintLastLog yes
+UsePrivilegeSeparation sandbox		# Default for new installations.
+# Accept locale-related environment variables
+AcceptEnv LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
+AcceptEnv LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
+AcceptEnv LC_IDENTIFICATION LC_ALL LANGUAGE
+AcceptEnv XMODIFIERS
+
+# override default of no subsystems
+Subsystem sftp	/usr/libexec/openssh/sftp-server
+
+# restrict location that can be used to login and enable password prompt
+AllowUsers ec2-user@10.84.0.0/24
+AllowUsers ec2-user@172.31.0.0/16
+PasswordAuthentication yes
+ChallengeResponseAuthentication yes

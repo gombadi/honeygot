@@ -1,0 +1,2 @@
+# Run the spot instance terminate notification checks
+* * * * * root /autobuild/spot/spot.sh

@@ -1,0 +1,11 @@
+#!/bin/bash
+aws s3 cp s3://s3-bucket-name/autobuild.tar.gz .
+tar -xzf autobuild.tar.gz
+for i in $(ls -1 autobuild/install/*.sh); do
+    if [ -x ${i} ]; then
+        ${i}
+    else
+        echo "Warning: unable to run install script ${i}"
+    fi
+done
+
