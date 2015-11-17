@@ -44,7 +44,7 @@ func main() {
 		log.Fatalf("start ssh failed. err: %v\n", err)
 	}
 
-	// wait for signal and then shutdown
+	// shutting down
 	fmt.Printf("\nShutting down system on signal: %v\n", <-sigChan)
 	close(doneChan)
 	sref.Close()
@@ -56,4 +56,4 @@ func main() {
 
 /*
 
- */
+*/

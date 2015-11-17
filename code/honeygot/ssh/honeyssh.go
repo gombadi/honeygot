@@ -9,8 +9,10 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net"
+	"net/http"
 	"os"
 	"strconv"
 	"strings"
@@ -19,6 +21,8 @@ import (
 	"github.com/gombadi/honeygot/code/honeygot/batcher"
 	"golang.org/x/crypto/ssh"
 )
+
+var extIP string // external ip that this system uses
 
 type SSHServer struct {
 	port   string // port to listen on
@@ -32,18 +36,38 @@ func New() *SSHServer {
 func (s *SSHServer) Start() error {
 
 	var err error
-
 	if port := os.Getenv("HONEYGOT_SSHPORT"); port != "" {
 		s.port = port
 	}
 
-	// start the ssh server listening and return
+	var extURL string
+	if extURL = os.Getenv("HONEYGOT_EXTURL"); extURL == "" {
+		extURL = "http://checkip.dyndns.org/"
+	}
+
+	fmt.Printf("extURL: %s\n", extURL)
+
+	// get our external ip address so we can add it to the results
+	resp, err := http.Get(extURL)
+	if err != nil {
+		return err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	resp.Body.Close()
+
+	extIP = strings.TrimSpace(string(body))
+
+	// start the ssh server listening and return ?
 	config := ssh.ServerConfig{
 		PasswordCallback:  authPassword,
 		PublicKeyCallback: authKey,
 	}
 
-	// generate a new private key each start so servers do not shared the same host key.
+	// generate a new private key each startcso it looks like a new server.
 	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		return err
@@ -107,9 +131,10 @@ var errAuthenticationFailed = errors.New("Invalid credentials. Please try again"
 // authPassword records any incoming request trying to auth with a username/password
 func authPassword(conn ssh.ConnMetadata, password []byte) (*ssh.Permissions, error) {
 
-	batcher.AddToBatch(fmt.Sprintf("%d sshPass %s %s %s",
+	batcher.AddToBatch(fmt.Sprintf("%d sshPass %s %s %s %s",
 		time.Now().Unix(),
 		strings.Split(conn.RemoteAddr().String(), ":")[0],
+		extIP,
 		conn.User(),
 		strconv.QuoteToASCII(string(password))))
 
@@ -123,9 +148,10 @@ func authKey(conn ssh.ConnMetadata, key ssh.PublicKey) (*ssh.Permissions, error)
 	h.Write(key.Marshal())
 	sum := h.Sum(nil)
 
-	batcher.AddToBatch(fmt.Sprintf("%d sshKey %s %s %s %s",
+	batcher.AddToBatch(fmt.Sprintf("%d sshKey %s %s %s %s %s",
 		time.Now().Unix(),
 		strings.Split(conn.RemoteAddr().String(), ":")[0],
+		extIP,
 		conn.User(),
 		key.Type(),
 		base64.StdEncoding.EncodeToString(sum)))
