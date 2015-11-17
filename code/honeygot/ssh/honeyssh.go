@@ -45,8 +45,6 @@ func (s *SSHServer) Start() error {
 		extURL = "http://checkip.dyndns.org/"
 	}
 
-	fmt.Printf("extURL: %s\n", extURL)
-
 	// get our external ip address so we can add it to the results
 	resp, err := http.Get(extURL)
 	if err != nil {
