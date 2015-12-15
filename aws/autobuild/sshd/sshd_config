@@ -5,7 +5,7 @@
 
 #	$OpenBSD: sshd_config,v 1.93 2014/01/10 05:59:19 djm Exp $
 
-Port 17351
+Port 12257
 #AddressFamily any
 #ListenAddress 0.0.0.0
 #ListenAddress ::
@@ -50,6 +50,7 @@ Subsystem sftp	/usr/libexec/openssh/sftp-server
 
 # restrict location that can be used to login and enable password prompt
 AllowUsers ec2-user@10.84.0.0/24
+AllowUsers ec2-user@172.31.0.0/16
 AllowUsers ec2-user@172.31.0.0/16
 PasswordAuthentication yes
 ChallengeResponseAuthentication yes

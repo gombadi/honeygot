@@ -11,8 +11,8 @@ RES=$(/usr/bin/curl -o /dev/null --silent --head --write-out '%{http_code}\n' ht
 
 if [ "x${RES}" != "x404" ]; then
     # when we are going to terminate then run all scripts in the uninstall dir
-    for u in $(ls -1 ${BASEDIR}/uninstall); do
-        ${BASEDIR}uninstall/${u}
+    for u in $(ls -1 ${BASEDIR}/*/uninstall.sh); do
+        ${u}
     done
     exit 0
 fi
@@ -25,8 +25,8 @@ RES=$(/usr/bin/curl -o /dev/null --silent --head --write-out '%{http_code}\n' ht
 
 if [ "x${RES}" != "x404" ]; then
     # when we are going to terminate then run all scripts in the uninstall dir
-    for u in $(ls -1 ${BASEDIR}/uninstall); do
-        ${BASEDIR}uninstall/${u}
+    for u in $(ls -1 ${BASEDIR}/*/uninstall.sh); do
+        ${u}
     done
     exit 0
 fi
@@ -38,8 +38,8 @@ RES=$(/usr/bin/curl -o /dev/null --silent --head --write-out '%{http_code}\n' ht
 
 if [ "x${RES}" != "x404" ]; then
     # when we are going to terminate then run all scripts in the uninstall dir
-    for u in $(ls -1 ${BASEDIR}/uninstall); do
-        ${BASEDIR}uninstall/${u}
+    for u in $(ls -1 ${BASEDIR}/*/uninstall.sh); do
+        ${u}
     done
     exit 0
 fi

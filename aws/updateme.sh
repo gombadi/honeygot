@@ -2,8 +2,8 @@
 
 # This script will create the tar file and upload it to AWS s3 bucket
 
-if [ ! -d autobuild/install ]; then
-    echo "Error: Unable to find the autobuild install directory in current location"
+if [ ! -f autobuild/install.sh ]; then
+    echo "Error: Unable to find the autobuild install script in current location"
     exit 1
 fi
 
